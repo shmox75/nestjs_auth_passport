@@ -7,6 +7,7 @@ import { LocalGuard } from './guards/local.guard';
 import { type Request } from 'express'
 import { JwtGuard } from './guards/jwt.guard';
 import { type Response } from 'express';
+import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +37,10 @@ export class AuthController {
         return req.user
     }
 
-    
+    @UseGuards(RefreshAuthGuard)
+    @Post('refresh')
+    refresh(@Req() req) {
+        return this.authService.refreshToken(req.user.id);
+    }
 
 }
