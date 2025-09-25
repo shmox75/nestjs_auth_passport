@@ -25,4 +25,7 @@ export class AuthController {
     status(@Req() req: Request) {
         return req.user
     }
+
+    
+
 }

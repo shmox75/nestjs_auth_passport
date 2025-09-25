@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthPayloadDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 const fakeUsers = [
     { id: 1, username: 'user1', password: 'pass1' },
@@ -10,7 +11,10 @@ const fakeUsers = [
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly jwtService: JwtService) {
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService
+    ) {
 
     }
 
@@ -22,6 +26,14 @@ export class AuthService {
 
         const { password, ...userWithoutPassword } = findUser;
 
-        return this.jwtService.sign(userWithoutPassword);
+        const token = this.jwtService.sign(userWithoutPassword);
+        const refreshToken = this.jwtService.sign(userWithoutPassword, {
+            expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN')
+        })
+
+        return {
+            token,
+            refreshToken
+        }
     }
 }
