@@ -41,7 +41,9 @@ export class AuthService {
         const payload = {
             sub: userId
         }
-        const token = this.jwtService.sign(payload);
+        const token = this.jwtService.sign(payload, {
+            expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN')
+        });
 
         return token
     }
